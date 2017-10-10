@@ -1,0 +1,12 @@
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+export default StyleSheet.create({
+  container: {
+    paddingVertical: 20,
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
