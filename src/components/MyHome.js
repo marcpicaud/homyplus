@@ -5,62 +5,88 @@ import * as styles from '../style';
 import { firebaseConnect, pathToJS, dataToJS, isLoaded } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 
+
+@firebaseConnect()
 @connect(
     // Map state to props
     ({ firebase }) => ({
-        homes: dataToJS(firebase, 'homes'), 
         authError: pathToJS(firebase, 'authError'),
         auth: pathToJS(firebase, 'auth'),
         profile: pathToJS(firebase, 'profile')
     })
 )
-@firebaseConnect(
-    (props, firebase) => {
-        console.log('PROPS');
-        console.log(props);
-        return [
-            { path: 'homes', queryParams: [`equalTo=${props.profile.group}`] }
-        ]
-    }
-)
 export default class MyHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            invitationCode: '',
+            createHomeInputValue: '',
+            home: null,
+            homeRef: null,
+        }
+    }
+
+    componentWillMount() {
+        if (this.props.profile.group) {
+            this.props.firebase.database().ref(`homes/${this.props.profile.group}`).on('value', (dataSnapshot) => {
+                this.setState({home: dataSnapshot.val()});
+                this.setState({homeRef: dataSnapshot.ref});
+            })
         }
     }
 
     handleLeaveMyHome() {
-        if (!this.props.homes) {
+        /*const { home } = this.state;
+        const { homeRef } = this.state;
+        if (!home) {
             return alert('You don\'t belong to any home');
         }
-        const homeKey = Object.keys(this.props.homes)[0];
-        const homeObject = this.props.homes[homeKey];
 
-        // this.props.firebase.database().ref(`/homes/${homeKey}`).remove()
-
-        // user is the admin of the home
-        if (homeObject.admin === this.props.firebase.auth().currentUser.uid) {
-            // TODO : delete the home, and notify the members
+        if (home.admin == this.props.firebase.auth().currentUser.uid) {
             Alert.alert(
                 'Delete home?',
                 'You are the owner of the home, this action will delete it',
                 [
                     { text: 'Confirm', onPress: () => {
-                        this.props.firebase.database().ref(`/homes/${homeKey}`).remove();
+                        const groupKey = this.props.profile.group
+                        this.props.firebase.database().ref(`/homes/${groupKey}`).remove();
+                        this.props.firebase.database().ref(`/users/${this.props.firebase.auth().currentUser.uid}`).update({group:null});
+                        this.props.firebase.database().ref(`/users`).orderByChild(`group`).equalTo(groupKey).update({group:null});
+                        this.state.homeRef.off();
+                        this.setState({home: null});
+                        this.setState({homeRef: null});
                         alert('Home successfully removed');
                     }},
                     { text: 'Cancel', onPress: () => { return }, style: 'cancel' }
                 ],
                 { cancelable: false}
             )
-        }
+        } else {
+            Alert.alert(
+                'Are you sure?',
+                'Leave your home?',
+                [
+                    { text: 'Confirm', onPress: () => {
+                        homeRef.once('value', (snapshotData) => {
+                            const uid = this.props.firebase.auth().currentUser.uid;
+                            let toUpdate = snapshotData.val().members;
+                            toUpdate[uid] = null;
+                            snapshotData.ref.update({members: toUpdate});
+                        });
+                        this.props.firebase.database().ref(`/users/${this.props.firebase.auth().currentUser.uid}`).update({group:null});
+                        homeRef.off();
+                        
+                        alert('Home successfully left');
+                        
+                    }},
+                    { text: 'Cancel', onPress: () => { return }, style: 'cancel' }
+                ],
+                { cancelable: false}
+            )
+        }*/
     }
 
     handleHomeCreation() {
-        if (!this.state.name) {
+        /*if (!this.state.name) {
             return alert('Home name must be truthy');
         }
         const userId = this.props.firebase.auth().currentUser.uid;
@@ -74,6 +100,9 @@ export default class MyHome extends React.Component {
         }
         const groupKey = this.props.firebase.database().ref('/homes').push(toInsert).key;
         this.props.firebase.database().ref('/users/'+userId).update({group: groupKey});
+        this.props.firebase.database().ref(`homes/${groupKey}`).once('value', (dataSnapshot) => {
+            this.setState({home: dataSnapshot.val()});
+        })*/
     }
 
     // TODO
@@ -93,17 +122,19 @@ export default class MyHome extends React.Component {
             toUpdate[userId] = true;
             snapshotData.ref.child(Object.keys(val)[0]).update({members: toUpdate});
             this.props.firebase.database().ref('/users/'+userId).update({group: Object.keys(val)[0]});
+            this.props.firebase.database().ref(`homes/${Object.keys(val)[0]}`).on('value', (dataSnapshot) => {
+                this.setState({home: dataSnapshot.val()});
+            })
         });
     }
 
 
     render() {
         
-        if (this.props.homes) {
-            const homeObject = this.props.homes[Object.keys(this.props.homes)[0]];
+        if (this.state.home) {
             return (
                 <View style={{marginTop: 20}}>
-                    <Text h1>{homeObject.name}</Text>
+                    <Text h1>{this.state.home.name}</Text>
                     <Button title="LEAVE MY HOME" style={{ marginTop: 20 }} onPress={() => this.handleLeaveMyHome()} />
                     <Button title='Share an invitation' style={{ marginTop: 20 }} onPress={() => { Share.share({ message: "Join my home using this invitation code : " + homeObject.invitationCode, title: "Title" }, { dialogTitle: "Title" }) }} />
                         
@@ -116,7 +147,7 @@ export default class MyHome extends React.Component {
                     <Text style={{textAlign: 'center'}}>CREATE MY HOME</Text>
                     <Divider />
                     <FormLabel>Name</FormLabel>
-                    <FormInput placeholder="My Home" onChangeText={(text) => this.setState({name: text})}></FormInput>
+                    <FormInput placeholder="My Home" onChangeText={(text) => this.setState({createHomeInputValue: text})}></FormInput>
                     <Button style={{ marginTop: 20 }} title='Create' onPress={() => this.handleHomeCreation()} />
                 </Card>
                 <Card>

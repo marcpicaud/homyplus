@@ -4,17 +4,10 @@ import * as styles from '../style';
 import { firebaseConnect,dataToJS, pathToJS, isLoaded, isEmpty } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 
-@firebaseConnect(
-    (props, firebase) => (
-        [
-            { path: 'homes', queryParams: ['orderByChild=admin', `equalTo=${firebase.auth().currentUser.uid}`] }
-        ]
-    )
-)
+@firebaseConnect()
 @connect(
     // Map state to props
     ({ firebase }) => ({
-        homes: dataToJS(firebase, 'homes'), 
         authError: pathToJS(firebase, 'authError'),
         auth: pathToJS(firebase, 'auth'),
         profile: pathToJS(firebase, 'profile')

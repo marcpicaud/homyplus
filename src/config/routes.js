@@ -5,7 +5,8 @@ import SignIn from '../components/SignIn';
 import SignUp from '../components/SignUp';
 import Calendar from '../components/Calendar';
 import UserSettings from '../components/UserSettings';
-import MyHome from '../components/MyHome';
+import MyHomeParent from '../components/MyHomeParent';
+//import MyHome from '../components/MyHome';
 import PasswordReset from '../components/PasswordReset';
 
 const SignedOutLayout = StackNavigator({
@@ -37,7 +38,7 @@ const SignedInLayout = TabNavigator({
     }
   },
   myHome: {
-    screen: MyHome,
+    screen: MyHomeParent,
     navigationOptions: {
       title: "My Home"
     }

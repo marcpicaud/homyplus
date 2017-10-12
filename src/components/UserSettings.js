@@ -7,17 +7,10 @@ import logoutAction from '../actions/actionsCreators';
 import { firebaseConnect, pathToJS, dataToJS, isLoaded } from 'react-redux-firebase';
 import { Card, FormLabel, FormInput, Button } from 'react-native-elements';
 
-@firebaseConnect(
-    (props, firebase) => (
-        [
-            { path: 'homes', queryParams: ['orderByChild=admin', `equalTo=${firebase.auth().currentUser.uid}`] }
-        ]
-    )
-)
+@firebaseConnect()
 @connect(
     // Map state to props
     ({ firebase }) => ({
-        homes: dataToJS(firebase, 'homes'), 
         authError: pathToJS(firebase, 'authError'),
         auth: pathToJS(firebase, 'auth'),
         profile: pathToJS(firebase, 'profile')
@@ -28,7 +21,6 @@ export default class UserSettings extends React.Component {
         this.props.firebase.logout();
         this.props.navigation.navigate('signedOutLayout');
     }
-
 
     render() {
         return (

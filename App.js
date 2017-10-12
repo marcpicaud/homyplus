@@ -20,12 +20,6 @@ const firebaseConfig = {
 };
 const reduxFirebaseConfig = {
   userProfile: 'users',
-  profileFactory: (userData, profileData) => {
-    const { user } = userData;
-    return {
-      email: user.email
-    }
-  },
   enableLogging: false,
   ReactNative: {
     AsyncStorage
