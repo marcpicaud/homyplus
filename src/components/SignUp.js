@@ -1,8 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import * as styles from '../style';
-import { Card, FormLabel, FormInput, Button } from 'react-native-elements';
-import { firebaseConnect, pathToJS, isLoaded } from 'react-redux-firebase';
+import { Card, FormLabel, FormInput, Button, Divider } from 'react-native-elements';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actionsCreators';
 
@@ -21,13 +20,24 @@ class SignUp extends React.Component {
         if (this.state.password !== this.state.passwordConfirm) {
             return alert('Your password and confirmation password don\'t match');
         }
+        if (!this.state.email) {
+            return alert('Email cannot be null');
+        }
+        if (!this.state.password || !this.state.passwordConfirm) {
+            return alert('Password cannot be null');
+        }
+        if (!this.state.username) {
+            return alert('Username cannot be null');
+        }
+
+        // Dispatch the signup action to the store
         this.props.signup(this.state.email, this.state.password, this.state.username);
     }
 
     componentWillUpdate(nextProps, nextState) {
         if (nextProps.currentUser) {
             // SignIn component will navigate to the actual app navigator
-            //this.props.navigation.navigate('signedInLayout');
+            // no need to this.props.navigation.navigate('signedInLayout');
         }
 
         if (nextProps.signupError) {
@@ -40,6 +50,8 @@ class SignUp extends React.Component {
         return (
             <View style={styles.container}>
                 <Card>
+                    <Text style={{ textAlign: 'center' }}>Profile information</Text>
+                    <Divider />
                     <FormLabel>Email</FormLabel>
                     <FormInput onChangeText={(text) => this.setState({email: text})} keyboardType='email-address' placeholder="test@email.com"></FormInput>
                     <FormLabel>Username</FormLabel>
@@ -56,7 +68,10 @@ class SignUp extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return {currentUser: state.currentUser, signupError: state.signupError}
+    return {
+        currentUser: state.currentUser,
+        signupError: state.signupError
+    }
 }
 
 export default connect(mapStateToProps, actions)(SignUp)

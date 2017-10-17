@@ -18,8 +18,7 @@ class MyCalendar extends React.Component {
                     outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
                     centerComponent={{ text: 'Calendar', style: { color: '#fff' } }}
                     />
-                    <ActivityIndicator size='large' style={{marginTop:70}} />
-
+                    <ActivityIndicator size='large' style={{marginTop:130}} />
                 </View>
             );
         }
@@ -32,7 +31,6 @@ class MyCalendar extends React.Component {
                     outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
                     centerComponent={{ text: 'Calendar', style: { color: '#fff' } }}
                     />
-                    <Agenda />
                 </View>
             );
         }

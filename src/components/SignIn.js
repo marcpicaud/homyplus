@@ -15,6 +15,14 @@ class SignIn extends React.Component {
     }
 
     handleLogin() {
+        if (!this.state.inputEmail) {
+            return alert('Email cannot be null');
+        }
+        if (!this.state.inputPassword) {
+            return alert('Password cannot be null');
+        }
+
+        // Dispatch the login action to the store
         this.props.login(this.state.inputEmail, this.state.inputPassword);
     }
 
@@ -50,7 +58,10 @@ class SignIn extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return {currentUser: state.currentUser, loginError: state.loginError}
+    return {
+        currentUser: state.currentUser,
+        loginError: state.loginError
+    }
 }
 
 export default connect(mapStateToProps, actions)(SignIn);

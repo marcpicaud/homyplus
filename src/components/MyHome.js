@@ -48,7 +48,8 @@ class MyHome extends React.Component {
                     outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
                     centerComponent={{ text: 'My Home', style: { color: '#fff' } }}
                   />
-                  <Text h1 style={{marginTop:70}}>{this.props.home.name}</Text>
+                  <Text h1 style={{marginTop:70, textAlign:'center'}}>{this.props.home.name}</Text>
+                  <Text h4 style={{marginTop:40}}>Members</Text>
                   <List containerStyle={{ marginBottom: 20 }}>
                     {
                       Object.keys(this.props.home.members).map((e) => (
