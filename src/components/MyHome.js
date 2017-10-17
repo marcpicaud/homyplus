@@ -1,163 +1,101 @@
 import React from 'react';
+import { Provider, connect } from 'react-redux';
+import { createStore, applyMiddleware, compose} from 'redux';
+import reduxThunk from 'redux-thunk';
+import reduxLogger from 'redux-logger';
 import { Alert, StyleSheet, View, Share, KeyboardAvoidingView } from 'react-native';
-import { Divider, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
-import * as styles from '../style';
-import { firebaseConnect, pathToJS, dataToJS, isLoaded } from 'react-redux-firebase';
-import { connect } from 'react-redux';
+import { Divider, List, ListItem, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
+import * as actions from '../actions/actionsCreators';
 
-
-@firebaseConnect()
-@connect(
-    // Map state to props
-    ({ firebase }) => ({
-        authError: pathToJS(firebase, 'authError'),
-        auth: pathToJS(firebase, 'auth'),
-        profile: pathToJS(firebase, 'profile')
-    })
-)
-export default class MyHome extends React.Component {
+class MyHome extends React.Component {
     constructor(props) {
-        super(props);
-        this.state = {
-            createHomeInputValue: '',
-            home: null,
-            homeRef: null,
-        }
+      super(props);
+      this.state = {
+        inputHomeName: null,
+        inputInvitationCode: null
+      }
     }
-
-    componentWillMount() {
-        if (this.props.profile.group) {
-            this.props.firebase.database().ref(`homes/${this.props.profile.group}`).on('value', (dataSnapshot) => {
-                this.setState({home: dataSnapshot.val()});
-                this.setState({homeRef: dataSnapshot.ref});
-            })
-        }
-    }
-
+  
     handleLeaveMyHome() {
-        /*const { home } = this.state;
-        const { homeRef } = this.state;
-        if (!home) {
-            return alert('You don\'t belong to any home');
-        }
-
-        if (home.admin == this.props.firebase.auth().currentUser.uid) {
-            Alert.alert(
-                'Delete home?',
-                'You are the owner of the home, this action will delete it',
-                [
-                    { text: 'Confirm', onPress: () => {
-                        const groupKey = this.props.profile.group
-                        this.props.firebase.database().ref(`/homes/${groupKey}`).remove();
-                        this.props.firebase.database().ref(`/users/${this.props.firebase.auth().currentUser.uid}`).update({group:null});
-                        this.props.firebase.database().ref(`/users`).orderByChild(`group`).equalTo(groupKey).update({group:null});
-                        this.state.homeRef.off();
-                        this.setState({home: null});
-                        this.setState({homeRef: null});
-                        alert('Home successfully removed');
-                    }},
-                    { text: 'Cancel', onPress: () => { return }, style: 'cancel' }
-                ],
-                { cancelable: false}
-            )
-        } else {
-            Alert.alert(
-                'Are you sure?',
-                'Leave your home?',
-                [
-                    { text: 'Confirm', onPress: () => {
-                        homeRef.once('value', (snapshotData) => {
-                            const uid = this.props.firebase.auth().currentUser.uid;
-                            let toUpdate = snapshotData.val().members;
-                            toUpdate[uid] = null;
-                            snapshotData.ref.update({members: toUpdate});
-                        });
-                        this.props.firebase.database().ref(`/users/${this.props.firebase.auth().currentUser.uid}`).update({group:null});
-                        homeRef.off();
-                        
-                        alert('Home successfully left');
-                        
-                    }},
-                    { text: 'Cancel', onPress: () => { return }, style: 'cancel' }
-                ],
-                { cancelable: false}
-            )
-        }*/
+      const uid = this.props.currentUser.uid;
+      this.props.leaveHome(this.props.home.key, uid);
     }
-
+  
     handleHomeCreation() {
-        /*if (!this.state.name) {
-            return alert('Home name must be truthy');
-        }
-        const userId = this.props.firebase.auth().currentUser.uid;
-        const members = {};
-        members[userId] = true;
-        let toInsert = {
-            admin: userId,
-            name: this.state.name,
-            members: members,
-            invitationCode: userId.substring(0,4).toUpperCase()
-        }
-        const groupKey = this.props.firebase.database().ref('/homes').push(toInsert).key;
-        this.props.firebase.database().ref('/users/'+userId).update({group: groupKey});
-        this.props.firebase.database().ref(`homes/${groupKey}`).once('value', (dataSnapshot) => {
-            this.setState({home: dataSnapshot.val()});
-        })*/
-    }
+      if (!this.state.inputHomeName) {
+        return alert(`Error : ${this.state.inputHomeName} is not a valid home name`);
+      }
 
-    // TODO
+      const uid = this.props.currentUser.uid;
+      this.props.createHome(this.state.inputHomeName, uid);
+    }
+  
     handleHomeJoining() {
-        const userId = this.props.firebase.auth().currentUser.uid;
-        const homeRef = this.props.firebase.database().ref('/homes').orderByChild('invitationCode').equalTo(this.state.invitationCode)
-        homeRef.on('value', (snapshotData) => {
-
-            // The actual data
-            const val = snapshotData.val();
-
-            if (!val) {
-                return alert('Invalid code');
-            }
-
-            let toUpdate = val[Object.keys(val)[0]].members;
-            toUpdate[userId] = true;
-            snapshotData.ref.child(Object.keys(val)[0]).update({members: toUpdate});
-            this.props.firebase.database().ref('/users/'+userId).update({group: Object.keys(val)[0]});
-            this.props.firebase.database().ref(`homes/${Object.keys(val)[0]}`).on('value', (dataSnapshot) => {
-                this.setState({home: dataSnapshot.val()});
-            })
-        });
+      const uid = this.props.currentUser.uid;
+      this.props.joinHome(this.state.inputInvitationCode, uid);
     }
-
-
+  
     render() {
-        
-        if (this.state.home) {
-            return (
-                <View style={{marginTop: 20}}>
-                    <Text h1>{this.state.home.name}</Text>
-                    <Button title="LEAVE MY HOME" style={{ marginTop: 20 }} onPress={() => this.handleLeaveMyHome()} />
-                    <Button title='Share an invitation' style={{ marginTop: 20 }} onPress={() => { Share.share({ message: "Join my home using this invitation code : " + homeObject.invitationCode, title: "Title" }, { dialogTitle: "Title" }) }} />
-                        
+      if (this.props.errorJoinHome) {
+        alert(this.props.errorJoinHome);
+        this.props.setNoErrorJoinHome();
+      }
+        if (this.props.home) {
+              return (
+                <View>
+                  <Header
+                    statusBarProps={{ barStyle: 'light-content' }}
+                    outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
+                    centerComponent={{ text: 'My Home', style: { color: '#fff' } }}
+                  />
+                  <Text h1 style={{marginTop:70}}>{this.props.home.name}</Text>
+                  <List containerStyle={{ marginBottom: 20 }}>
+                    {
+                      Object.keys(this.props.home.members).map((e) => (
+                        <ListItem
+                          key={e}
+                          title={e}
+                          hideChevron={true}
+                        />
+                      ))
+                    }
+                  </List>
+                  <Button title="Leave my home" icon={{name: "exit-to-app"}} backgroundColor='#3D6DCC' style={{ marginTop: 20 }} onPress={() => this.handleLeaveMyHome()} />
+                  <Button title='Share an invitation' icon={{name: "share"}} backgroundColor='#3D6DCC' style={{ marginTop: 20 }} onPress={() => { Share.share({ message: "Join my home using this invitation code : " + this.props.home.key, title: "Title" }, { dialogTitle: "Title" }) }} />
                 </View>
-            )
-        }
-        return (
-            <KeyboardAvoidingView style={{marginTop: 20}} behavior="position">
+              )
+          }
+          return (
+            <KeyboardAvoidingView behavior="position">
+              <Header
+                statusBarProps={{ barStyle: 'light-content' }}
+                outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
+                centerComponent={{ text: 'My Home', style: { color: '#fff' } }}
+              />
+              <View style={{ marginTop: 80 }}>
                 <Card>
-                    <Text style={{textAlign: 'center'}}>CREATE MY HOME</Text>
-                    <Divider />
-                    <FormLabel>Name</FormLabel>
-                    <FormInput placeholder="My Home" onChangeText={(text) => this.setState({createHomeInputValue: text})}></FormInput>
-                    <Button style={{ marginTop: 20 }} title='Create' onPress={() => this.handleHomeCreation()} />
+                  <Text style={{ textAlign: 'center' }}>CREATE MY HOME</Text>
+                  <Divider />
+                  <FormLabel>Name</FormLabel>
+                  <FormInput placeholder="My Home" onChangeText={(text) => this.setState({ inputHomeName: text })}></FormInput>
+                  <Button style={{ marginTop: 20 }} icon={{ name: "library-add" }} backgroundColor='#3D6DCC' title='Create' onPress={() => this.handleHomeCreation()} />
                 </Card>
                 <Card>
-                    <Text style={{textAlign: 'center'}}>JOIN A HOME</Text>
-                    <Divider />
-                    <FormLabel>Invitation code</FormLabel>
-                    <FormInput placeholder="Invitation code..." onChangeText={(text) => this.setState({invitationCode: text})}></FormInput>
-                    <Button style={{ marginTop: 20 }} title='Join' onPress={() => this.handleHomeJoining()} />
+                  <Text style={{ textAlign: 'center' }}>JOIN A HOME</Text>
+                  <Divider />
+                  <FormLabel>Invitation code</FormLabel>
+                  <FormInput placeholder="Invitation code..." onChangeText={(text) => this.setState({ inputInvitationCode: text })}></FormInput>
+                  <Button style={{ marginTop: 20 }} icon={{ name: "call-merge" }} backgroundColor='#3D6DCC' title='Join' onPress={() => this.handleHomeJoining()} />
                 </Card>
+              </View>
+              
             </KeyboardAvoidingView>
-        );
+          );
     }
-}
+  }
+  
+  function mapStateToProps(state) {
+    return { home: state.home, errorJoinHome: state.errorJoinHome, currentUser: state.currentUser };
+  }
+  
+  export default connect(mapStateToProps, actions)(MyHome)

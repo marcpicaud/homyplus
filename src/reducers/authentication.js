@@ -1,11 +1,10 @@
 import * as types from '../actions/actionTypes';
 
-const initialState = {
-    isLoggedIn: false,
-    waitingForLogin: false
+const initialAuthState = {
+    isLoggedIn: false
 };
 
-export default function authenticationReducer(state = initialState, action) {
+export default function authenticationReducer(state = initialAuthState, action) {
     switch (action.type) {
         case types.LOGIN: {
             return {...state, isLoggedIn: true}

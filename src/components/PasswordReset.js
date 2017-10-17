@@ -4,17 +4,9 @@ import * as styles from '../style';
 import { Card, FormLabel, FormInput, Button } from 'react-native-elements';
 import { firebaseConnect, pathToJS, isLoaded } from 'react-redux-firebase';
 import { connect } from 'react-redux';
+import * as actions from '../actions/actionsCreators';
 
-@firebaseConnect()
-@connect(
-    // Map state to props
-    ({ firebase }) => ({
-        authError: pathToJS(firebase, 'authError'),
-        auth: pathToJS(firebase, 'auth'),
-        profile: pathToJS(firebase, 'profile')
-    })
-)
-export default class PasswordReset extends React.Component {
+class PasswordReset extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,10 +15,14 @@ export default class PasswordReset extends React.Component {
     }
 
     handlePasswordReset() {
-        this.props.firebase.auth()
-            .sendPasswordResetEmail(this.state.email)
-            .then(() => {alert('Email sent')})
-            .catch((error) => {alert(error)});
+        this.props.sendPasswordResetEmail(this.state.email);
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if (nextProps && nextProps.passwordResetStatus) {
+            alert(nextProps.passwordResetStatus);
+        }
+        this.props.setPasswordResetStatus();
     }
 
     render() {
@@ -36,8 +32,14 @@ export default class PasswordReset extends React.Component {
                     <FormLabel>Email</FormLabel>
                     <FormInput keyboardType='email-address' placeholder="test@email.com" onChangeText={(text) => this.setState({email:text})}></FormInput>
                 </Card>
-                <Button style={{marginTop:20}} title='Send me an email to reset my password' onPress={() => this.handlePasswordReset()} />
+                <Button style={{marginTop:20}} icon={{name: 'play-arrow'}} backgroundColor='#3D6DCC' title='Send me an email' onPress={() => this.handlePasswordReset()} />
             </View>
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {passwordResetStatus: state.passwordResetStatus}
+}
+
+export default connect(mapStateToProps, actions)(PasswordReset)

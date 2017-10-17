@@ -1,55 +1,61 @@
 import { React } from 'react';
 import { StackNavigator, TabNavigator } from 'react-navigation';
+import Icon from 'react-native-vector-icons';
 
 import SignIn from '../components/SignIn';
 import SignUp from '../components/SignUp';
-import Calendar from '../components/Calendar';
+import MyCalendar from '../components/MyCalendar';
 import UserSettings from '../components/UserSettings';
-import MyHomeParent from '../components/MyHomeParent';
-//import MyHome from '../components/MyHome';
+import MyHome from '../components/MyHome';
 import PasswordReset from '../components/PasswordReset';
 
 const SignedOutLayout = StackNavigator({
   signIn: {
     screen: SignIn,
     navigationOptions: {
-      title: "Sign In"
+      title: "Sign In",
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: '#3D6DCC' },
     }
   },
   signUp: {
     screen: SignUp,
     navigationOptions: {
-      title: "Sign Up"
+      title: "Sign Up",
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: '#3D6DCC' },
     }
   },
   passwordReset: {
     screen: PasswordReset,
     navigationOptions: {
-      title: "Password recovery"
+      title: "Password recovery",
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: '#3D6DCC' },
     }
   }
 });
 
 const SignedInLayout = TabNavigator({
   calendar: {
-    screen: Calendar,
+    screen: MyCalendar,
     navigationOptions: {
-      title: "Calendar"
+      tabBarLabel: "Calendar"
     }
   },
   myHome: {
-    screen: MyHomeParent,
+    screen: MyHome,
     navigationOptions: {
-      title: "My Home"
+      title: "My Home",
     }
   },
   settings: {
     screen: UserSettings,
     navigationOptions: {
-      title: "Settings"
+      tabBarLabel: "Settings"
     }
   }
-});
+}, {});
 
 export const createAppNavigator = (isSignedIn = false) => {
   return StackNavigator({
