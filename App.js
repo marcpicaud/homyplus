@@ -10,7 +10,7 @@ import { Alert, StyleSheet, View, Share, KeyboardAvoidingView } from 'react-nati
 import { Divider, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
 import * as actions from './src/actions/actionsCreators';
 
-const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
+const createStoreWithMiddleware = applyMiddleware(reduxThunk, reduxLogger)(createStore);
 
 export default class App extends React.Component {
   render() {
