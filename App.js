@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider, connect } from 'react-redux';
-import { createStore, applyMiddleware, compose} from 'redux';
+import { createStore, applyMiddleware} from 'redux';
 import reduxThunk from 'redux-thunk';
 import reduxLogger from 'redux-logger';
 import { StackNavigator, TabNavigator, AddNavigationHelpers } from "react-navigation";
