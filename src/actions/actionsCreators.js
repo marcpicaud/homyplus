@@ -1,5 +1,7 @@
 import firebase from 'firebase';
+import * as ActionTypes from './actionTypes';
 
+// TODO: environments variables
 var config = {
     apiKey: "AIzaSyBWuZgjnCD8gnuRRjptvt3LmxZCYhet6uw",
     authDomain: "homyplus-87df6.firebaseapp.com",
@@ -25,10 +27,11 @@ export function login(email, password) {
                 // firebase.auth() contains a currentUser
                 // property after a successful signin
                 dispatch({
-                    type: 'LOGIN',
+                    type: ActionTypes.LOGIN,
                     payload: Auth.currentUser
                 })
                 
+                // Determines wether the user has a home ("group") or not
                 const homeId = Users.child(Auth.currentUser.uid).child('group').once('value', (snapshot) => {
                     if (snapshot.val()) {
                         dispatch(fetchHome(snapshot.val()));
@@ -44,16 +47,18 @@ export function login(email, password) {
     }
 }
 
+// Creates a user in DB and signs the user in
 export function signup(email, password, username) {
     return dispatch => {
         Auth.createUserWithEmailAndPassword(email, password)
         .then(() => {
             // On successful creation of the user account, this user will also be signed in
             dispatch({
-                type: 'LOGIN',
+                type: ActionTypes.LOGIN,
                 payload: Auth.currentUser
             })
 
+            // Save some user info into realtime database
             Users.child(Auth.currentUser.uid).set({
                 email: Auth.currentUser.email,
                 username: username
@@ -66,6 +71,7 @@ export function signup(email, password, username) {
     }
 }
 
+// Triggers firebase reset password procedure
 export function sendPasswordResetEmail(email) {
     return dispatch => {
         Auth.sendPasswordResetEmail(email)
@@ -74,40 +80,45 @@ export function sendPasswordResetEmail(email) {
     }
 }
 
+// Updates passwordResetStatus slice of the store
 export function setPasswordResetStatus(status = null) {
     return {
-        type: 'SET_PASSWORD_RESET_STATUS',
+        type: ActionTypes.SET_PASSWORD_RESET_STATUS,
         payload: status
     }
 }
 
+// Updates signupError slice of the store
 export function setSignupError(error) {
     return {
-        type: 'SET_SIGNUP_ERROR',
+        type: ActionTypes.SET_SIGNUP_ERROR,
         payload: `${error.code} ${error.message}`
     }
 }
 
+// Removes signupError slice of the store
 export function unsetSignupError() {
     return {
-        type: 'UNSET_SIGNUP_ERROR'
+        type: ActionTypes.UNSET_SIGNUP_ERROR
     }
 }
 
+// Updates loginError slice of the store
 export function setLoginError(error) {
     return {
-        type: 'SET_LOGIN_ERROR',
+        type: ActionTypes.SET_LOGIN_ERROR,
         payload: `${error.code} ${error.message}`
     }
 }
 
+// Removes loginError slice of the store
 export function unsetLoginError() {
     return {
-        type: 'UNSET_LOGIN_ERROR'
+        type: ActionTypes.UNSET_LOGIN_ERROR
     }
 }
 
-// Remove the currentUser slice of the store
+// Logout the user and Remove the currentUser slice of the store
 export function logout() {
     return dispatch => {
         Users.child(`${Auth.currentUser.uid}`).child('group').once('value', (snapshot) => {
@@ -116,7 +127,7 @@ export function logout() {
             }
         })
         Auth.signOut().then(() => { 
-            dispatch({type: 'LOGOUT'});
+            dispatch({type: ActionTypes.LOGOUT});
         })
     }
 }
@@ -140,15 +151,16 @@ export function createHome(homeName, uid) {
 export function fetchHome(key = null) {
     return dispatch => {
         if (key) {
+            // callback will be fired everytime the data is updated
             Homes.child(key).on('value', (snapshot) => {
                 dispatch({
-                    type: 'FETCH_HOME',
+                    type: ActionTypes.FETCH_HOME,
                     payload: Object.assign({key: key}, snapshot.val())
                 })
             })
         } else {
             dispatch({
-                type: 'FETCH_HOME',
+                type: ActionTypes.FETCH_HOME,
                 payload: null
             });
         }
@@ -156,18 +168,22 @@ export function fetchHome(key = null) {
     }
 }
 
-// 
+// Join a home via invitation key
 export function joinHome(key, uid) {
     return dispatch => {
         Homes.child(key).once('value', snapshot => {
             if (!snapshot.val()) {
+                // invalid code
                 dispatch(setErrorJoinHome())
             } else {
+                // each key represents a firebase location
+                // each value represents the data to update at this location
                 const newData = {
                     [`homes/${key}/members/${uid}`]: true,
                     [`users/${uid}/group`]: key
                 }
                 Db.update(newData)
+                // update store
                 dispatch(fetchHome(key));
             }
         })
@@ -178,7 +194,7 @@ export function joinHome(key, uid) {
 // home join event
 export function setErrorJoinHome() {
     return {
-        type: 'SET_ERROR_JOIN_HOME',
+        type: ActionTypes.SET_ERROR_JOIN_HOME,
         payload: 'Home does not exists'
     }
 }
@@ -187,7 +203,7 @@ export function setErrorJoinHome() {
 // during a failed home join event
 export function setNoErrorJoinHome() {
     return {
-        type: 'SET_NO_ERROR_JOIN_HOME'
+        type: ActionTypes.SET_NO_ERROR_JOIN_HOME
     }
 }
 
@@ -204,10 +220,11 @@ export function leaveHome(key, uid) {
     }
 }
 
+// Remove the home slice of the store
 export function unsetHome(key) {
-    let myRef = Homes.child(key);
-    myRef.off('value');
+    // Remove all firebase data listeners
+    Homes.child(key).off('value');
     return {
-        type: 'DELETE_HOME'
+        type: ActionTypes.DELETE_HOME
     };
 }

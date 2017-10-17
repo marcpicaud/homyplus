@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import authenticationReducer from './authentication';
 import _ from 'lodash';
+import * as ActionTypes from '../actions/actionTypes';
 
 const initialState = {
     // undefined means not loaded yet by firebase sdk. null means no home.
@@ -8,31 +8,57 @@ const initialState = {
     errorJoinHome: null
 }
 
+
 export default function AppReducer(state = initialState, action) {
     switch (action.type) {
-        case 'LOGOUT':
+        
+        // Removes the currentUser slice
+        case ActionTypes.LOGOUT:
             return _.omit(state, ['currentUser', 'home'] );
-        case 'SET_PASSWORD_RESET_STATUS':
+        
+        // Sets the passwordResetStatus slice
+        case ActionTypes.SET_PASSWORD_RESET_STATUS:
             return {...state, passwordResetStatus: action.payload}
-        case 'SET_SIGNUP_ERROR':
+        
+        // Sets the signupError slice of the store after a failed signup
+        case ActionTypes.SET_SIGNUP_ERROR:
             return {...state, signupError: action.payload}
-        case 'UNSET_SIGNUP_ERROR':
+        
+        // Removes the signupError slice
+        case ActionTypes.UNSET_SIGNUP_ERROR:
             return _.omit(state, 'signupError')
-        case 'SET_LOGIN_ERROR':
+        
+        // Sets the loginError slice
+        case ActionTypes.SET_LOGIN_ERROR:
             return {...state, loginError: action.payload}
-        case 'UNSET_LOGIN_ERROR':
+        
+        // Removes the loginError slice
+        case ActionTypes.UNSET_LOGIN_ERROR:
             return _.omit(state, 'loginError')
-        case 'LOGIN':
+        
+        // Sets the currentUser slice
+        case ActionTypes.LOGIN:
             return {...state, currentUser: action.payload}
-        case 'FETCH_HOME':
+        
+        // Sets the home slice
+        case ActionTypes.FETCH_HOME:
             return {...state, home: action.payload}
-        case 'DELETE_HOME':
+        
+        // Removes the home slice
+        case ActionTypes.DELETE_HOME:
             return {...state, home: null}
-        case 'SET_ERROR_JOIN_HOME':
+        
+        // Sets the errorJoinHome slice
+        case ActionTypes.SET_ERROR_JOIN_HOME:
             return {...state, errorJoinHome: action.payload};
-        case 'SET_NO_ERROR_JOIN_HOME':
+        
+        // Sets the errorJoinHome slice
+        case ActionTypes.SET_NO_ERROR_JOIN_HOME:
             return {...state, errorJoinHome: null};
+        
         default:
+            console.log('Action type not defined : ', action.type);
+            console.log('Payload: ', action.payload);
             return state
     }
 }

@@ -1,5 +1,11 @@
-export const START_LOGIN = 'START_LOGIN';
-export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
-export const REGISTER = 'REGISTER';
-export const DUMMY = 'DUMMY';
+export const SET_PASSWORD_RESET_STATUS = 'SET_PASSWORD_RESET_STATUS';
+export const SET_SIGNUP_ERROR = 'SET_SIGNUP_ERROR';
+export const UNSET_SIGNUP_ERROR = 'UNSET_SIGNUP_ERROR';
+export const SET_LOGIN_ERROR = 'SET_LOGIN_ERROR';
+export const UNSET_LOGIN_ERROR = 'UNSET_LOGIN_ERROR';
+export const LOGIN = 'LOGIN';
+export const FETCH_HOME = 'FETCH_HOME';
+export const DELETE_HOME = 'DELETE_HOME';
+export const SET_ERROR_JOIN_HOME = 'SET_ERROR_JOIN_HOME';
+export const SET_NO_ERROR_JOIN_HOME = 'SET_NO_ERROR_JOIN_HOME';
