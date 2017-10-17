@@ -7,6 +7,7 @@ import SignUp from '../components/SignUp';
 import MyCalendar from '../components/MyCalendar';
 import UserSettings from '../components/UserSettings';
 import MyHome from '../components/MyHome';
+import AddEvent from '../components/AddEvent';
 import PasswordReset from '../components/PasswordReset';
 
 const SignedOutLayout = StackNavigator({
@@ -36,12 +37,28 @@ const SignedOutLayout = StackNavigator({
   }
 });
 
-const SignedInLayout = TabNavigator({
+const CalendarNavigator = StackNavigator({
   calendar: {
     screen: MyCalendar,
     navigationOptions: {
-      tabBarLabel: "Calendar"
+      title: 'My Calendar',
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: '#3D6DCC' }
     }
+  },
+  addEvent: {
+    screen: AddEvent,
+    navigationOptions: {
+      title: 'Add Event',
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: '#3D6DCC' }
+    }
+  }
+})
+
+const SignedInLayout = TabNavigator({
+  calendar: {
+    screen: CalendarNavigator
   },
   myHome: {
     screen: MyHome,
@@ -63,7 +80,6 @@ export const createAppNavigator = (isSignedIn = false) => {
       signedOutLayout: { screen: SignedOutLayout }
     },{
       initialRouteName: 'signedOutLayout',
-      mode: 'modal',
       headerMode: 'none'
     });
 }

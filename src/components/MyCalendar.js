@@ -3,21 +3,20 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import * as styles from '../style';
 import { connect } from 'react-redux';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import { Header, Text } from 'react-native-elements';
+import { Header, Text, Button } from 'react-native-elements';
 import * as actions from '../actions/actionsCreators';
 
 class MyCalendar extends React.Component {
+
+    handleAddEvent() {
+        this.props.navigation.navigate('addEvent')
+    }
 
     render() {
         // Prop is not loaded yet
         if (this.props.home === undefined) {
             return (
                 <View>
-                    <Header
-                    statusBarProps={{ barStyle: 'light-content' }}
-                    outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
-                    centerComponent={{ text: 'Calendar', style: { color: '#fff' } }}
-                    />
                     <ActivityIndicator size='large' style={{marginTop:130}} />
                 </View>
             );
@@ -26,11 +25,8 @@ class MyCalendar extends React.Component {
         if (this.props.home) {
             return (
                 <View>
-                    <Header
-                    statusBarProps={{ barStyle: 'light-content' }}
-                    outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
-                    centerComponent={{ text: 'Calendar', style: { color: '#fff' } }}
-                    />
+                <Text h3>USER HAS A HOME</Text>
+                <Button title="Add event" icon={{name: "event"}} backgroundColor='#3D6DCC' style={{ marginTop: 20 }} onPress={() => this.handleAddEvent()} />
                 </View>
             );
         }
@@ -38,12 +34,7 @@ class MyCalendar extends React.Component {
         // User doesn't have a home
         return (
             <View>
-                <Header
-                    statusBarProps={{ barStyle: 'light-content' }}
-                    outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
-                    centerComponent={{ text: 'Calendar', style: { color: '#fff' } }}
-                />
-                <Text h3 style={{marginTop:80}}>PLEASE JOIN A HOME OR CREATE ONE TO USE THE CALENDAR</Text>
+                <Text h3>PLEASE JOIN A HOME OR CREATE ONE TO USE THE CALENDAR</Text>
             </View>
         );
     }

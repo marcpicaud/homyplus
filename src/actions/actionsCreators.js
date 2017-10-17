@@ -32,9 +32,10 @@ export function login(email, password) {
                 })
                 
                 // Determines wether the user has a home ("group") or not
-                const homeId = Users.child(Auth.currentUser.uid).child('group').once('value', (snapshot) => {
+                Users.child(Auth.currentUser.uid).child('group').once('value', (snapshot) => {
                     if (snapshot.val()) {
                         dispatch(fetchHome(snapshot.val()));
+                        dispatch(fetchHomeMembers(snapshot.val()));
                     } else {
                         dispatch(fetchHome(null));
                     }
@@ -45,6 +46,26 @@ export function login(email, password) {
                 dispatch(setLoginError(error))
             })
     }
+}
+
+// Sets the homeMembers slice of the store
+export function fetchHomeMembers(key) {
+    return dispatch => {
+        Users.orderByChild('group').equalTo(key).on('value', (snapshotData) => {
+            if (!snapshotData.val()) {
+                dispatch({
+                    type: ActionTypes.SET_HOME_MEMBERS,
+                    payload: {}
+                })
+            } else {
+                dispatch({
+                    type: ActionTypes.SET_HOME_MEMBERS,
+                    payload: snapshotData.val()
+                })
+            }
+        })
+    }
+
 }
 
 // Creates a user in DB and signs the user in
@@ -185,6 +206,7 @@ export function joinHome(key, uid) {
                 Db.update(newData)
                 // update store
                 dispatch(fetchHome(key));
+                dispatch(fetchHomeMembers(key));
             }
         })
     }
@@ -217,6 +239,7 @@ export function leaveHome(key, uid) {
         }
         Db.update(newData);
         dispatch(unsetHome(key));
+        dispatch(unsetHomeMembers(key));
     }
 }
 
@@ -227,4 +250,11 @@ export function unsetHome(key) {
     return {
         type: ActionTypes.DELETE_HOME
     };
+}
+
+export function unsetHomeMembers(key) {
+    Users.orderByChild('group').equalTo(key).off();
+    return {
+        type: ActionTypes.UNSET_HOME_MEMBERS
+    }
 }

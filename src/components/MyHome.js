@@ -52,10 +52,10 @@ class MyHome extends React.Component {
                   <Text h4 style={{marginTop:40}}>Members</Text>
                   <List containerStyle={{ marginBottom: 20 }}>
                     {
-                      Object.keys(this.props.home.members).map((e) => (
+                      Object.keys(this.props.homeMembers).map((e, i) => (
                         <ListItem
-                          key={e}
-                          title={e}
+                          key={i}
+                          title={this.props.homeMembers[e].username}
                           hideChevron={true}
                         />
                       ))
@@ -96,7 +96,12 @@ class MyHome extends React.Component {
   }
   
   function mapStateToProps(state) {
-    return { home: state.home, errorJoinHome: state.errorJoinHome, currentUser: state.currentUser };
+    return {
+      home: state.home,
+      errorJoinHome: state.errorJoinHome,
+      currentUser: state.currentUser,
+      homeMembers: state.homeMembers
+    };
   }
   
   export default connect(mapStateToProps, actions)(MyHome)
