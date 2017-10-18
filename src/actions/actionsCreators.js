@@ -13,7 +13,7 @@ firebase.initializeApp({
 
 const Users = firebase.database().ref('users');
 const Homes = firebase.database().ref('homes');
-// const Events = firebase.database().ref('events');
+const Events = firebase.database().ref('events');
 const Db = firebase.database().ref();
 const Auth = firebase.auth();
 
@@ -35,6 +35,7 @@ export function login(email, password) {
           if (snapshot.val()) {
             dispatch(fetchHome(snapshot.val()));
             dispatch(fetchHomeMembers(snapshot.val()));
+            dispatch(fetchHomeEvents(snapshot.val()));
           } else {
             dispatch(fetchHome(null));
           }
@@ -60,6 +61,25 @@ export function fetchHomeMembers(key) {
         dispatch({
           type: ActionTypes.SET_HOME_MEMBERS,
           payload: snapshotData.val(),
+        });
+      }
+    });
+  };
+}
+
+// Sets the homeEvents slice of the store
+export function fetchHomeEvents(homeKey) {
+  return (dispatch) => {
+    Events.child(homeKey).on('value', (snapshot) => {
+      if (!snapshot.val()) {
+        dispatch({
+          type: ActionTypes.SET_HOME_EVENTS,
+          payload: {},
+        });
+      } else {
+        dispatch({
+          type: ActionTypes.SET_HOME_EVENTS,
+          payload: snapshot.val(),
         });
       }
     });
@@ -142,6 +162,8 @@ export function logout() {
     Users.child(`${Auth.currentUser.uid}`).child('group').once('value', (snapshot) => {
       if (snapshot.val()) {
         dispatch(unsetHome(snapshot.val()));
+        dispatch(unsetHomeMembers(snapshot.val()));
+        dispatch(unsetHomeEvents(snapshot.val()));
       }
     });
     Auth.signOut().then(() => {
@@ -161,6 +183,8 @@ export function createHome(homeName, uid) {
     };
     Db.update(newData);
     dispatch(fetchHome(key));
+    dispatch(fetchHomeMembers(key));
+    dispatch(fetchHomeEvents(key));
   };
 }
 
@@ -202,6 +226,7 @@ export function joinHome(key, uid) {
         // update store
         dispatch(fetchHome(key));
         dispatch(fetchHomeMembers(key));
+        dispatch(fetchHomeEvents(key));
       }
     });
   };
@@ -235,6 +260,7 @@ export function leaveHome(key, uid) {
     Db.update(newData);
     dispatch(unsetHome(key));
     dispatch(unsetHomeMembers(key));
+    dispatch(unsetHomeEvents(key));
   };
 }
 
@@ -251,5 +277,21 @@ export function unsetHomeMembers(key) {
   Users.orderByChild('group').equalTo(key).off();
   return {
     type: ActionTypes.UNSET_HOME_MEMBERS,
+  };
+}
+
+export function unsetHomeEvents(key) {
+  Events.child(key).off();
+  return {
+    type: ActionTypes.UNSET_HOME_EVENTS,
+  };
+}
+
+export function createEvent(homeKey, event) {
+  return (dispatch) => {
+    const { key } = Events.child(homeKey).push();
+    Db.update({
+      [`events/${homeKey}/${key}`]: event,
+    });
   };
 }
