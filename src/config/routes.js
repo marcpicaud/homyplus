@@ -1,6 +1,4 @@
-import { React } from 'react';
 import { StackNavigator, TabNavigator } from 'react-navigation';
-import Icon from 'react-native-vector-icons';
 
 import SignIn from '../components/SignIn';
 import SignUp from '../components/SignUp';
@@ -14,27 +12,27 @@ const SignedOutLayout = StackNavigator({
   signIn: {
     screen: SignIn,
     navigationOptions: {
-      title: "Sign In",
+      title: 'Sign In',
       headerTintColor: 'white',
       headerStyle: { backgroundColor: '#3D6DCC' },
-    }
+    },
   },
   signUp: {
     screen: SignUp,
     navigationOptions: {
-      title: "Sign Up",
+      title: 'Sign Up',
       headerTintColor: 'white',
       headerStyle: { backgroundColor: '#3D6DCC' },
-    }
+    },
   },
   passwordReset: {
     screen: PasswordReset,
     navigationOptions: {
-      title: "Password recovery",
+      title: 'Password recovery',
       headerTintColor: 'white',
       headerStyle: { backgroundColor: '#3D6DCC' },
-    }
-  }
+    },
+  },
 });
 
 const CalendarNavigator = StackNavigator({
@@ -43,43 +41,42 @@ const CalendarNavigator = StackNavigator({
     navigationOptions: {
       title: 'My Calendar',
       headerTintColor: 'white',
-      headerStyle: { backgroundColor: '#3D6DCC' }
-    }
+      headerStyle: { backgroundColor: '#3D6DCC' },
+    },
   },
   addEvent: {
     screen: AddEvent,
     navigationOptions: {
       title: 'Add Event',
       headerTintColor: 'white',
-      headerStyle: { backgroundColor: '#3D6DCC' }
-    }
-  }
-})
+      headerStyle: { backgroundColor: '#3D6DCC' },
+    },
+  },
+});
 
 const SignedInLayout = TabNavigator({
   calendar: {
-    screen: CalendarNavigator
+    screen: CalendarNavigator,
   },
   myHome: {
     screen: MyHome,
     navigationOptions: {
-      title: "My Home",
-    }
+      title: 'My Home',
+    },
   },
   settings: {
     screen: UserSettings,
     navigationOptions: {
-      tabBarLabel: "Settings"
-    }
-  }
+      tabBarLabel: 'Settings',
+    },
+  },
 }, {});
 
-export const createAppNavigator = (isSignedIn = false) => {
-  return StackNavigator({
-      signedInLayout: { screen: SignedInLayout },
-      signedOutLayout: { screen: SignedOutLayout }
-    },{
-      initialRouteName: 'signedOutLayout',
-      headerMode: 'none'
-    });
-}
+export default StackNavigator({
+  signedInLayout: { screen: SignedInLayout },
+  signedOutLayout: { screen: SignedOutLayout },
+}, {
+  initialRouteName: 'signedOutLayout',
+  headerMode: 'none',
+});
+
