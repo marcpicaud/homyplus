@@ -7,6 +7,13 @@ import { Agenda } from 'react-native-calendars';
 
 export default class MyCalendar extends Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {
+            items: {}
+        };
+    }
+    
     render() {
         this.state = {};
         this.date = new Date().toString()
@@ -15,9 +22,9 @@ export default class MyCalendar extends Component {
             //items={this.state.items}
             items = {{
                 '2017-10-23': [{text: 'item 1 - any js object', name: "test", }],
-                '2017-11-23': [{text: 'item 2 - any js object'}],
-                '2017-11-24': [],
-                '2017-11-25': [{text: 'item 3 - any js object'},{text: 'any js object'}],
+                '2017-10-22': [{text: 'item 2 - any js object'}],
+                '2017-10-24': [],
+                '2017-10-25': [{text: 'item 3 - any js object'},{text: 'any js object'}],
             }}
             loadItemsForMonth={this.loadItems.bind(this)}
             selected={new Date().toString()}
