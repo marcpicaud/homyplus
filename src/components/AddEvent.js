@@ -1,102 +1,135 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, KeyboardAvoidingView, ScrollView, DatePickerIOS } from 'react-native';
-import * as styles from '../style';
 import { connect } from 'react-redux';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Header, Text, CheckBox, Button, Card, Divider, FormLabel, FormInput } from 'react-native-elements';
+import _ from 'lodash';
 import * as actions from '../actions/actionsCreators';
 
 class AddEvent extends React.Component {
-    constructor(props) {
-        super(props);
-        //const now = new Date();
-        this.state = {
-            inputEventTitle: '',
-            inputEventNotes: '',
-            inputEventLocation: '',
-            isPrivate: false,
-            beginDate: new Date(),
-            endDate: new Date()
-        }
+  static handleSearch(text) {
+    console.log(text);
+  }
+
+  constructor(props) {
+    super(props);
+    // const now = new Date();
+    this.state = {
+      inputEventTitle: '',
+      inputEventNotes: '',
+      inputEventLocation: '',
+      isPrivate: false,
+      beginDate: new Date(),
+      endDate: new Date(),
+      guests: {},
+    };
+  }
+
+  handleEventCreation() {
+    if (!this.state.inputEventTitle) {
+      return alert('Event Title must be specified');
+    }
+    if (!this.state.inputEventLocation) {
+      return alert('Event location must be specified');
+    }
+    if (!this.state.beginDate) {
+      return alert('Begin date must be specified');
+    }
+    if (!this.state.endDate) {
+      return alert('End date must be specified');
     }
 
-    handleSearch(text) {
-        console.log(text);
-    }
+    this.props.createEvent(this.props.home.key, {
+      title: this.state.inputEventTitle,
+      location: this.state.inputEventLocation,
+      beginDate: this.state.beginDate.toISOString(),
+      endDate: this.state.endDate.toISOString(),
+      notes: this.state.inputEventNotes,
+      guests: this.state.guests,
+      isPrivate: this.state.isPrivate,
+    });
 
-    toggleGuest(guest) {
-        this.setState({[guest]: this.state[guest] ? !this.state[guest] : true});
-        console.log(this.state);
-    }
+    return this.props.navigation.goBack();
+  }
 
-    handleBeginDateChange(date) {
-        this.setState({beginDate: date})
+  toggleGuest(guest) {
+    let guests = { ...this.state.guests };
+    if (guests[guest]) {
+      this.setState({ guests: _.omit(guests, guest) });
+    } else {
+      guests = { ...guests, [guest]: true };
+      this.setState({ guests });
     }
+  }
 
-    handleEndDateChange(date) {
-        this.setState({endDate: date})
-    }
+  handleBeginDateChange(date) {
+    this.setState({ beginDate: date });
+  }
 
-    render() {
-        console.log(this.state);
-        return (
-            <KeyboardAvoidingView behavior="position">
-                <ScrollView>
-                    <Card>
-                        <FormLabel>Event Title</FormLabel>
-                        <FormInput placeholder="veggie brunch" onChangeText={(text) => this.setState({ inputEventTitle: text })}></FormInput>
-                        <FormLabel>Event Location</FormLabel>
-                        <FormInput placeholder="At boby's" onChangeText={(text) => this.setState({ inputEventLocation: text })}></FormInput>
-                        <FormLabel>Begin Date</FormLabel>
-                        <DatePickerIOS
-                            date={this.state.beginDate}
-                            mode='datetime'
-                            minuteInterval={5}
-                            minimumDate={new Date()}
-                            onDateChange={(date) => this.handleBeginDateChange(date)}
-                        />
-                        <FormLabel>End Date</FormLabel>
-                        <DatePickerIOS
-                            date={this.state.endDate}
-                            mode='datetime'
-                            minuteInterval={5}
-                            minimumDate={new Date()}
-                            onDateChange={(date) => this.handleEndDateChange(date)}
-                        />
-                        <FormLabel>Guests</FormLabel>
-                        {
-                            Object.keys(this.props.homeMembers).map((e, i) => (
-                                <CheckBox
-                                    key={e}
-                                    title={this.props.homeMembers[e].username}
-                                    checked={this.state[e] !== undefined ? this.state[e] : false}
-                                    onPress={() => this.toggleGuest(e)}
-                                />
-                            ))
-                        }
-                        <FormLabel>Privacy</FormLabel>
-                        <CheckBox
-                            title='Hide to others'
-                            checked={this.state.isPrivate}
-                            onPress={() => this.setState({ isPrivate: !this.state.isPrivate })}
-                        />
-                        <FormLabel>Notes</FormLabel>
-                        <FormInput onChangeText={(text) => this.setState({ inputEventNotes: text })}></FormInput>
+  handleEndDateChange(date) {
+    this.setState({ endDate: date });
+  }
 
-                        <Button style={{ marginTop: 20 }} icon={{ name: "library-add" }} backgroundColor='#3D6DCC' title='Create' onPress={() => this.handleHomeCreation()} />
-                    </Card>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        )
-    }
+  render() {
+    return (
+      <KeyboardAvoidingView behavior="position">
+        <ScrollView>
+          <Card>
+            <FormLabel>Event Title</FormLabel>
+            <FormInput placeholder="veggie brunch" onChangeText={(text) => this.setState({ inputEventTitle: text })}></FormInput>
+            <FormLabel>Event Location</FormLabel>
+            <FormInput placeholder="At boby's" onChangeText={(text) => this.setState({ inputEventLocation: text })}></FormInput>
+            <FormLabel>Begin Date</FormLabel>
+            <DatePickerIOS
+              date={this.state.beginDate}
+              mode='datetime'
+              minuteInterval={5}
+              minimumDate={new Date()}
+              onDateChange={(date) => this.handleBeginDateChange(date)}
+            />
+            <FormLabel>End Date</FormLabel>
+            <DatePickerIOS
+              date={this.state.endDate}
+              mode='datetime'
+              minuteInterval={5}
+              minimumDate={this.state.beginDate}
+              onDateChange={(date) => this.handleEndDateChange(date)}
+            />
+            <FormLabel>Guests</FormLabel>
+            {
+              Object.keys(this.props.homeMembers).map((e, i) => (
+                <CheckBox
+                  key={e}
+                  title={this.props.homeMembers[e].username}
+                  checked={this.state.guests[e] !== undefined ? this.state.guests[e] : false}
+                  onPress={() => this.toggleGuest(e)}
+                />
+              ))
+            }
+            <FormLabel>Privacy</FormLabel>
+            <CheckBox
+              title='Hide to others'
+              checked={this.state.isPrivate}
+              onPress={() => this.setState({ isPrivate: !this.state.isPrivate })}
+            />
+            <FormLabel>Notes</FormLabel>
+            <FormInput onChangeText={(text) => this.setState({ inputEventNotes: text })}></FormInput>
+
+            <Button style={{ marginTop: 20 }} icon={{ name: "library-add" }} backgroundColor='#3D6DCC' title='Create' onPress={() => this.handleEventCreation()} />
+          </Card>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    )
+  }
 }
 
 function mapStateToProps(state) {
-    return {
-        home: state.home,
-        homeMembers: state.homeMembers,
-        currentUser: state.currentUser
-    }
+  return {
+    home: state.home,
+    homeMembers: state.homeMembers,
+    currentUser: state.currentUser,
+    events: state.homeEvents,
+  };
 }
 
 export default connect(mapStateToProps, actions)(AddEvent);

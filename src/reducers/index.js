@@ -6,6 +6,7 @@ const initialState = {
   // null means no home.
   home: undefined,
   homeMembers: {},
+  homeEvents: undefined,
   errorJoinHome: null,
 };
 
@@ -63,6 +64,13 @@ export default function AppReducer(state = initialState, action) {
     // Unsets the homeMember slice
     case ActionTypes.UNSET_HOME_MEMBERS:
       return _.omit(state, 'homeMembers');
+
+    // Sets the homeEvent slice
+    case ActionTypes.SET_HOME_EVENTS:
+      return { ...state, homeEvents: action.payload };
+
+    case ActionTypes.UNSET_HOME_EVENTS:
+      return _.omit(state, 'homeEvents');
 
     default:
       console.log('Action type not defined : ', action.type);
