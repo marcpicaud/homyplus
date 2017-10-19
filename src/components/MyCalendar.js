@@ -7,6 +7,9 @@ import { Agenda } from 'react-native-calendars';
 import * as actions from '../actions/actionsCreators';
 
 class MyCalendar extends React.Component {
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    headerRight: <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} />,
+  });
 
   constructor(props) {
     super(props);
@@ -56,7 +59,6 @@ class MyCalendar extends React.Component {
       renderItem(item) {
         return (
           <View style={[styles.item, {height: item.height}]}>
-            <Button title="Add event" icon={{ name: 'event' }} backgroundColor="#3D6DCC" style={{ marginTop: 10 }} onPress={() => this.handleAddEvent()} />
             <Text>{item.title}</Text>
             <Text>{item.text}</Text>
           </View>
