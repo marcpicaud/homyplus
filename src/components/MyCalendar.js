@@ -22,12 +22,6 @@ class MyCalendar extends React.Component {
     this.props.navigation.navigate('addEvent');
   }
 
-  formatHomeEventForDisplay(event) {
-    const timestamp = Date.parse(event.beginDate);
-    const date = new Date(timestamp).toLocaleDateString();
-    return event.title + ' ' + date;
-  }
-
   handleDayPressed(day) {
     console.log(day.dateString)
     
