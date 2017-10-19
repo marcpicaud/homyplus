@@ -25,26 +25,24 @@ class MyCalendar extends React.Component {
     return event.title + ' ' + date;
   }
 
+  handleDayPressed(day) {
+    console.log(day.dateString)
+    
+  }
+  
   loadItems(day) {
-       // setTimeout(() => {
-       //      this.setState({
-       //          items: {
-       //          '2017-05-22': [{text: 'item 1 - any js object', name: "test", }],
-       //          '2017-05-23': [{text: 'item 2 - any js object'}],
-       //          '2017-05-24': [],
-       //          '2017-05-25': [{text: 'item 3 - any js object'},{text: 'any js object'}],
-       //      }
-       //      });
-       //  }, 1000);
-       // Object.keys(this.props.homeEvents).map((e, i) => {
-       //      console.log("i is:", this.props.homeEvents[e]);
-       //      console.log("e is:", e);
-       // });
-       const newItems = {};
-       let tmp = []
+    const newItems = {};
+    if(!this.state.items[day.dateString])
+       newItems[day.dateString] = []
+      
+      
       Object.keys(this.props.homeEvents).forEach((key, i) => {
-        tmp.push(this.props.homeEvents[key])
-        newItems[this.timeToString(this.props.homeEvents[key].beginDate)] = tmp;
+        
+        if(!newItems[this.timeToString(this.props.homeEvents[key].beginDate)]){
+          newItems[this.timeToString(this.props.homeEvents[key].beginDate)] = [];
+          newItems[this.timeToString(this.props.homeEvents[key].beginDate)].push(this.props.homeEvents[key]);  
+        }
+        
       });
 
       this.setState({
@@ -58,6 +56,7 @@ class MyCalendar extends React.Component {
       renderItem(item) {
         return (
           <View style={[styles.item, {height: item.height}]}>
+            <Button title="Add event" icon={{ name: 'event' }} backgroundColor="#3D6DCC" style={{ marginTop: 10 }} onPress={() => this.handleAddEvent()} />
             <Text>{item.title}</Text>
             <Text>{item.text}</Text>
           </View>
@@ -98,6 +97,7 @@ class MyCalendar extends React.Component {
             renderItem={this.renderItem.bind(this)}
             renderEmptyDate={this.renderEmptyDate.bind(this)}
             rowHasChanged={this.rowHasChanged.bind(this)}
+            onDayPress={(day) => {this.handleDayPressed(day)}}
             //markingType={'interactive'}
             //markedDates={'2017-10': []}
             //  '2017-05-08': [{textColor: '#666'}],
@@ -128,6 +128,7 @@ function mapStateToProps(state) {
   return {
     home: state.home,
     homeEvents: state.homeEvents,
+    items: state.items,
   };
 }
 
