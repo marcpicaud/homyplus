@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Header, Text, CheckBox, Button, Card, Divider, FormLabel, FormInput } from 'react-native-elements';
 import _ from 'lodash';
+import DatePicker from 'react-native-datepicker'
 import * as actions from '../actions/actionsCreators';
 
 class AddEvent extends React.Component {
@@ -80,21 +81,53 @@ class AddEvent extends React.Component {
             <FormLabel>Event Location</FormLabel>
             <FormInput placeholder="At boby's" onChangeText={(text) => this.setState({ inputEventLocation: text })}></FormInput>
             <FormLabel>Begin Date</FormLabel>
-            <DatePickerIOS
-              date={this.state.beginDate}
-              mode='datetime'
-              minuteInterval={5}
-              minimumDate={new Date()}
-              onDateChange={(date) => this.handleBeginDateChange(date)}
-            />
+            <DatePicker
+            style={{width: 200}}
+            date={this.state.begindate}
+            mode="datetime"
+            placeholder="select date"
+            format="YYYY-MM-DD"
+            minDate="2016-05-01"
+            maxDate="2016-06-01"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={(date) => this.handleBeginDateChange(date)} />
             <FormLabel>End Date</FormLabel>
-            <DatePickerIOS
-              date={this.state.endDate}
-              mode='datetime'
-              minuteInterval={5}
-              minimumDate={this.state.beginDate}
-              onDateChange={(date) => this.handleEndDateChange(date)}
-            />
+            <DatePicker
+            style={{width: 200}}
+            date={this.state.endDate}
+            mode="datetime"
+            placeholder="select date"
+            format="YYYY-MM-DD"
+            minDate="2016-05-01"
+            maxDate="2016-06-01"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={(date) => this.handleEndDateChange(date)} />
             <FormLabel>Guests</FormLabel>
             {
               Object.keys(this.props.homeMembers).map((e, i) => (
