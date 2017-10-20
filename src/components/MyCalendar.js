@@ -37,10 +37,35 @@ class MyCalendar extends React.Component {
     Object.keys(nextProps.homeEvents).forEach((key, index) => {
       const currentEvent = nextProps.homeEvents[key];
       const currentEventTime = this.timeToString(currentEvent.beginDate)
-  
+
+      day_diff = this.dayDiff(new Date(currentEvent.beginDate), new Date(currentEvent.endDate))
+
       if (!items[currentEventTime]) {
         items[currentEventTime] = [];
       }
+
+      //check if begin date is superior to end date, else exit
+      if(day_diff >= 0) {
+        //check if event is multiday
+        if(day_diff > 0) {
+          console.log("multi days event"+index, currentEvent)
+          newEvent = currentEvent;
+          for (var i = 0; i < day_diff; i++) {
+            newEventDate = new Date(newEvent.beginDate)
+            newEvent.beginDate = this.timeToString(newEventDate.setDate(newEventDate.getDate() + 1))
+            if(!items[newEvent.beginDate]){
+              items[newEvent.beginDate] = []
+            }
+            items[newEvent.beginDate].push(newEvent);
+            console.log("newEvent is: ", newEvent)
+          }
+        }
+      } else {
+        console.log("begin date is superior to end date EXIT")
+        return;
+      }
+
+
       items[currentEventTime].push(currentEvent);
     });
 
@@ -49,6 +74,11 @@ class MyCalendar extends React.Component {
     items[today] = items[today] ? items[today] : [];
 
     this.setState({items});
+  }
+
+  //get the number of days between 2 dates
+  dayDiff(first, second) {
+    return Math.round((second-first)/(1000*60*60*24));
   }
 
   // What happens when the user taps "Add Event"
@@ -63,17 +93,18 @@ class MyCalendar extends React.Component {
       this.state.items[day.dateString] = [];
     }
   }
-  
+
   // Triggered when a month is loaded
   loadItems(calendarObject) {
-    console.log('loadItems:', calendarObject);
+    // console.log('loadItems:', calendarObject);
   }
 
   renderItem(item) {
     return (
       <View style={[styles.item, { height: item.height }]}>
+        <Text>{item.beginDate}</Text>
         <Text>{item.title}</Text>
-        <Text>{item.text}</Text>
+        <Text>{item.note}</Text>
       </View>
     );
   }

@@ -6,7 +6,7 @@ import reduxLogger from 'redux-logger';
 import AppNavigator from './src/config/routes';
 import AppReducer from './src/reducers/index';
 
-const createStoreWithMiddleware = applyMiddleware(reduxThunk, reduxLogger)(createStore);
+const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 
 export default class App extends React.Component {
   render() {
