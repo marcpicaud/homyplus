@@ -64,11 +64,11 @@ class AddEvent extends React.Component {
   }
 
   handleBeginDateChange(date) {
-    this.setState({ beginDate: date });
+    this.setState({ beginDate: new Date(date) });
   }
 
   handleEndDateChange(date) {
-    this.setState({ endDate: date });
+    this.setState({ endDate: new Date(date) });
   }
 
   render() {
@@ -83,12 +83,11 @@ class AddEvent extends React.Component {
             <FormLabel>Begin Date</FormLabel>
             <DatePicker
             style={{width: 200}}
-            date={this.state.begindate}
+            date={this.state.beginDate}
             mode="datetime"
             placeholder="select date"
             format="YYYY-MM-DD"
-            minDate="2016-05-01"
-            maxDate="2016-06-01"
+            minDate={new Date()}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{
@@ -109,10 +108,9 @@ class AddEvent extends React.Component {
             style={{width: 200}}
             date={this.state.endDate}
             mode="datetime"
+            minDate={this.state.beginDate}
             placeholder="select date"
             format="YYYY-MM-DD"
-            minDate="2016-05-01"
-            maxDate="2016-06-01"
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={{

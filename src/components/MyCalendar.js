@@ -7,6 +7,9 @@ import { Agenda } from 'react-native-calendars';
 import * as actions from '../actions/actionsCreators';
 
 class MyCalendar extends React.Component {
+
+  // Override router config to add a button on headerRight.
+  // TODO: Might be possible to use standard config.
   static navigationOptions = ({ navigation, screenProps }) => ({
     headerRight: <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} />,
   });
@@ -18,64 +21,80 @@ class MyCalendar extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Props haven't changed
+    if (this.props.homeEvents == nextProps.homeEvents) {
+      return;
+    }
+
+    // homeEvents is not loaded yet
+    if (!nextProps.homeEvents) {
+      return;
+    }
+
+    // Loops through firebase data and build the inner state accordingly
+    const items = {}
+    Object.keys(nextProps.homeEvents).forEach((key, index) => {
+      const currentEvent = nextProps.homeEvents[key];
+      const currentEventTime = this.timeToString(currentEvent.beginDate)
+  
+      if (!items[currentEventTime]) {
+        items[currentEventTime] = [];
+      }
+      items[currentEventTime].push(currentEvent);
+    });
+
+    // Init 'today' as empty item if there is no event planned
+    const today = this.timeToString(new Date().getTime());
+    items[today] = items[today] ? items[today] : [];
+
+    this.setState({items});
+  }
+
+  // What happens when the user taps "Add Event"
   handleAddEvent() {
     this.props.navigation.navigate('addEvent');
   }
 
   handleDayPressed(day) {
-    console.log(day.dateString)
-    
+    // Force the agenda to display the selected day as emtpy
+    // if there is no event in db
+    if (!this.state.items[day.dateString]) {
+      this.state.items[day.dateString] = [];
+    }
   }
   
-  loadItems(day) {
-    const newItems = {};
-    if(!this.state.items[day.dateString])
-       newItems[day.dateString] = []
-      
-      
-      Object.keys(this.props.homeEvents).forEach((key, i) => {
-        
-        if(!newItems[this.timeToString(this.props.homeEvents[key].beginDate)]){
-          newItems[this.timeToString(this.props.homeEvents[key].beginDate)] = [];
-          newItems[this.timeToString(this.props.homeEvents[key].beginDate)].push(this.props.homeEvents[key]);  
-        }
-        
-      });
+  // Triggered when a month is loaded
+  loadItems(calendarObject) {
+    console.log('loadItems:', calendarObject);
+  }
 
-      this.setState({
-        items: newItems
-      });
-      console.log("new items is: ", this.props.homeEvents)
+  renderItem(item) {
+    return (
+      <View style={[styles.item, { height: item.height }]}>
+        <Text>{item.title}</Text>
+        <Text>{item.text}</Text>
+      </View>
+    );
+  }
 
-        //console.log(`Load Items for ${day.timestamp}-${day.month}`);
-      }
+  renderEmptyDate() {
+    return (
+      <View style={styles.emptyDate}><Text>Nothing to show for this day.</Text></View>
+    );
+  }
 
-      renderItem(item) {
-        return (
-          <View style={[styles.item, {height: item.height}]}>
-            <Text>{item.title}</Text>
-            <Text>{item.text}</Text>
-          </View>
-        );
-      }
+  rowHasChanged(r1, r2) {
+    return r1.title !== r2.title;
+  }
 
-      renderEmptyDate() {
-        return (
-          <View style={styles.emptyDate}><Text>This is empty date!</Text><Button title="Add event" icon={{ name: 'event' }} backgroundColor="#3D6DCC" style={{ marginTop: 10 }} onPress={() => this.handleAddEvent()} /></View>
-        );
-      }
-
-      rowHasChanged(r1, r2) {
-        return r1.title !== r2.title;
-      }
-
-      timeToString(time) {
-        const date = new Date(time);
-        return date.toISOString().split('T')[0];
-      }
+  timeToString(time) {
+    const date = new Date(time);
+    return date.toISOString().split('T')[0];
+  }
 
   render() {
-    // Prop is not loaded yet
+    // Props are not loaded yet
     if (this.props.home === undefined || this.props.homeEvents === undefined) {
       return (
         <View>
