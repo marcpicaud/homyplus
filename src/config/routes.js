@@ -70,7 +70,7 @@ const SignedInLayout = TabNavigator({
       tabBarLabel: 'Settings',
     },
   },
-}, {});
+}, {tabBarPosition: 'bottom'});
 
 export default StackNavigator({
   signedInLayout: { screen: SignedInLayout },
