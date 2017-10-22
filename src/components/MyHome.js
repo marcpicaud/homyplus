@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Share, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { View, Share, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
 import { Divider, List, ListItem, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import * as actions from '../actions/actionsCreators';
@@ -16,7 +16,15 @@ class MyHome extends React.Component {
 
   handleLeaveMyHome() {
     const { uid } = this.props.currentUser;
-    this.props.leaveHome(this.props.home.key, uid);
+    Alert.alert(
+      'Alert',
+      'Do you really want to leave your home?',
+      [
+        { text: 'Cancel', onPress: () => {}, style: 'cancel' },
+        { text: 'OK', onPress: () => this.props.leaveHome(this.props.home.key, uid) },
+      ],
+      { cancelable: false }
+    )
   }
 
   handleHomeCreation() {
