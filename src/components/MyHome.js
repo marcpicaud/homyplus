@@ -69,8 +69,8 @@ class MyHome extends React.Component {
               ))
             }
           </List>
-          <Button title="Leave my home" icon={{ name: "exit-to-app" }} backgroundColor='#3D6DCC' style={{ marginTop: 20 }} onPress={() => this.handleLeaveMyHome()} />
-          <Button title='Share an invitation' icon={{ name: "share" }} backgroundColor='#3D6DCC' style={{ marginTop: 20 }} onPress={() => { Share.share({ message: "Join my home using this invitation code : " + this.props.home.key, title: "Title" }, { dialogTitle: "Title" }) }} />
+          <Button title="Leave my home" icon={{ name: "exit-to-app" }} backgroundColor='#3D6DCC' buttonStyle={{ marginTop: 20 }} onPress={() => this.handleLeaveMyHome()} />
+          <Button title='Share an invitation' icon={{ name: "share" }} backgroundColor='#3D6DCC' buttonStyle={{ marginTop: 20 }} onPress={() => { Share.share({ message: "Join my home using this invitation code : " + this.props.home.key, title: "Title" }, { dialogTitle: "Title" }) }} />
         </View>
       );
     }

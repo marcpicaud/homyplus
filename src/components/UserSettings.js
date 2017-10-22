@@ -19,7 +19,7 @@ class UserSettings extends React.Component {
           outerContainerStyles={{ backgroundColor: '#3D6DCC' }}
           centerComponent={{ text: 'My Settings', style: { color: '#fff' } }}
         />
-        <Button style={{ marginTop: 90 }} icon={{ name: 'lock-outline' }} backgroundColor='#3D6DCC' title="LOG OUT" onPress={() => this.handleLogout()} />
+        <Button buttonStyle={{ marginTop: 90 }} icon={{ name: 'lock-outline' }} backgroundColor='#3D6DCC' title="LOG OUT" onPress={() => this.handleLogout()} />
       </View>
     );
   }

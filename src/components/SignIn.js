@@ -51,9 +51,9 @@ class SignIn extends React.Component {
           <FormLabel>Password</FormLabel>
           <FormInput defaultValue="aaaaaaaa" secureTextEntry placeholder="Password" onChangeText={ text => this.setState({ inputPassword: text })} />
         </Card>
-        <Button style={{ marginTop: 20 }} icon={{ name: 'play-arrow' }} backgroundColor="#3D6DCC" title="Sign in" onPress={() => this.handleLogin()} />
-        <Button style={{ marginTop: 20 }} icon={{ name: 'account-circle' }} backgroundColor="#3D6DCC" title="Create an account" onPress={() => this.props.navigation.navigate('signUp')} />
-        <Button style={{ marginTop: 20 }} icon={{ name: 'lock-open' }} backgroundColor="#3D6DCC" title="Forgot Password?" onPress={() => this.props.navigation.navigate('passwordReset')} />
+        <Button buttonStyle={{ marginTop: 20 }} icon={{ name: 'play-arrow' }} backgroundColor="#3D6DCC" title="Sign in" onPress={() => this.handleLogin()} />
+        <Button buttonStyle={{ marginTop: 20 }} icon={{ name: 'account-circle' }} backgroundColor="#3D6DCC" title="Create an account" onPress={() => this.props.navigation.navigate('signUp')} />
+        <Button buttonStyle={{ marginTop: 20 }} icon={{ name: 'lock-open' }} backgroundColor="#3D6DCC" title="Forgot Password?" onPress={() => this.props.navigation.navigate('passwordReset')} />
       </View>
     );
   }
