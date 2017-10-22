@@ -38,6 +38,7 @@ export function login(email, password) {
             dispatch(fetchHomeEvents(snapshot.val()));
           } else {
             dispatch(fetchHome(null));
+            dispatch(fetchHomeEvents(null));
           }
         });
       })
@@ -68,21 +69,28 @@ export function fetchHomeMembers(key) {
 }
 
 // Sets the homeEvents slice of the store
-export function fetchHomeEvents(homeKey) {
+export function fetchHomeEvents(homeKey = null) {
   return (dispatch) => {
-    Events.child(homeKey).on('value', (snapshot) => {
-      if (!snapshot.val()) {
-        dispatch({
-          type: ActionTypes.SET_HOME_EVENTS,
-          payload: {},
-        });
-      } else {
-        dispatch({
-          type: ActionTypes.SET_HOME_EVENTS,
-          payload: snapshot.val(),
-        });
-      }
-    });
+    if (homeKey) {
+      Events.child(homeKey).on('value', (snapshot) => {
+        if (!snapshot.val()) {
+          dispatch({
+            type: ActionTypes.SET_HOME_EVENTS,
+            payload: null,
+          });
+        } else {
+          dispatch({
+            type: ActionTypes.SET_HOME_EVENTS,
+            payload: snapshot.val(),
+          });
+        }
+      });
+    } else {
+      dispatch({
+        type: ActionTypes.SET_HOME_EVENTS,
+        payload: null,
+      });
+    }
   };
 }
 
