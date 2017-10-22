@@ -3,12 +3,38 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { Button, Header } from 'react-native-elements';
 import PropTypes from 'prop-types';
+import { Permissions, Notifications } from 'expo';
 import * as actions from '../actions/actionsCreators';
 
 class UserSettings extends React.Component {
   handleLogout() {
     this.props.logout();
     this.props.navigation.navigate('signedOutLayout');
+  }
+
+  async enableNotifications() {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== 'granted') {
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+      return;
+    }
+
+    // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+    this.props.enableNotification(this.props.currentUser.uid, token);
   }
 
   render() {
@@ -20,6 +46,8 @@ class UserSettings extends React.Component {
           centerComponent={{ text: 'My Settings', style: { color: '#fff' } }}
         />
         <Button buttonStyle={{ marginTop: 90 }} icon={{ name: 'lock-outline' }} backgroundColor='#3D6DCC' title="LOG OUT" onPress={() => this.handleLogout()} />
+
+        <Button buttonStyle={{ marginTop: 20 }} icon={{ name: 'add-alert' }} backgroundColor='#3D6DCC' title="Enable notifications" onPress={() => this.enableNotifications()} />
       </View>
     );
   }

@@ -303,3 +303,9 @@ export function createEvent(homeKey, event) {
     });
   };
 }
+
+export function enableNotification(userKey, expoToken) {
+  return (dispatch) => {
+    Users.child(userKey).update({expoToken});
+  }
+}
