@@ -28,7 +28,7 @@ class MyCalendar extends React.Component {
     }
 
     // homeEvents is not loaded yet
-    if (!nextProps.homeEvents) {
+    if (nextProps.homeEvents === undefined) {
       return;
     }
 
