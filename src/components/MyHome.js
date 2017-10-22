@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Share, KeyboardAvoidingView } from 'react-native';
+import { View, Share, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { Divider, List, ListItem, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import * as actions from '../actions/actionsCreators';
@@ -35,6 +35,15 @@ class MyHome extends React.Component {
   }
 
   render() {
+    // Props are not loaded yet
+    if (this.props.home === undefined || !this.props.homeMembers) {
+      return (
+        <View>
+          <ActivityIndicator size='large' style={{ marginTop: 130 }} />
+        </View>
+      );
+    }
+
     if (this.props.errorJoinHome) {
       alert(this.props.errorJoinHome);
       this.props.setNoErrorJoinHome();
