@@ -63,14 +63,14 @@ export default function AppReducer(state = initialState, action) {
 
     // Unsets the homeMember slice
     case ActionTypes.UNSET_HOME_MEMBERS:
-      return _.omit(state, 'homeMembers');
+      return { ...state, homeMembers: {} };
 
     // Sets the homeEvent slice
     case ActionTypes.SET_HOME_EVENTS:
       return { ...state, homeEvents: action.payload };
 
     case ActionTypes.UNSET_HOME_EVENTS:
-      return _.omit(state, 'homeEvents');
+      return { ...state, homeEvents: {} };
 
     default:
       console.log('Action type not defined : ', action.type);
