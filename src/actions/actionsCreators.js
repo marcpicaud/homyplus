@@ -99,12 +99,13 @@ export function signup(email, password, username) {
   return (dispatch) => {
     Auth.createUserWithEmailAndPassword(email, password)
       .then(() => {
-        // On successful creation of the user account, this user will also be signed in
-        dispatch({
-          type: ActionTypes.LOGIN,
-          payload: Auth.currentUser,
-        });
-
+        Auth.currentUser.updateProfile({ displayName: username }).then(() => {
+          // On successful creation of the user account, this user will also be signed in
+          dispatch({
+            type: ActionTypes.LOGIN,
+            payload: Auth.currentUser,
+          });
+        })
         // Save some user info into realtime database
         Users.child(Auth.currentUser.uid).set({
           email: Auth.currentUser.email,
