@@ -71,7 +71,7 @@ class MyHome extends React.Component {
               Object.keys(this.props.homeMembers).map((e, i) => (
                 <ListItem
                   key={i}
-                  title={this.props.homeMembers[e].username}
+                  title={this.props.currentUser.uid == e ? this.props.homeMembers[e].username + ' (me)' : this.props.homeMembers[e].username}
                   hideChevron={true}
                 />
               ))

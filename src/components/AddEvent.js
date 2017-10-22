@@ -131,7 +131,7 @@ class AddEvent extends React.Component {
               Object.keys(this.props.homeMembers).map((e, i) => (
                 <CheckBox
                   key={e}
-                  title={this.props.homeMembers[e].username}
+                  title={this.props.currentUser.uid == e ? this.props.homeMembers[e].username + ' (me)' : this.props.homeMembers[e].username}
                   checked={this.state.guests[e] !== undefined ? this.state.guests[e] : false}
                   onPress={() => this.toggleGuest(e)}
                 />
