@@ -302,6 +302,23 @@ export function createEvent(homeKey, event) {
     Db.update({
       [`events/${homeKey}/${key}`]: event,
     });
+
+    // Send notification to guests
+    let guests = event.guests ? Object.keys(event.guests).map(e => e == Auth.currentUser.uid ? null : e) : [];
+    guests = guests.filter(n => n!==null);
+    const organizer = Auth.currentUser.uid;
+    const cloudFunctionUrl = 'https://us-central1-homyplus-87df6.cloudfunctions.net/notifyGuests';
+    fetch(cloudFunctionUrl, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        organizer: organizer,
+        guests: guests
+      })
+    }).catch((e) => console.log(e));
   };
 }
 
