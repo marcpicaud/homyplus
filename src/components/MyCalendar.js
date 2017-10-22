@@ -28,7 +28,13 @@ class MyCalendar extends React.Component {
     }
 
     // homeEvents is not loaded yet
-    if (nextProps.homeEvents === undefined) {
+    if (!nextProps.homeEvents) {
+      // Init 'today' as empty item if there is no event planned
+      const today = this.timeToString(new Date().getTime());
+      const items = {
+        [today]: []
+      }
+      this.setState({ items });
       return;
     }
 
