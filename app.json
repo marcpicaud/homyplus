@@ -1,5 +1,18 @@
 {
   "expo": {
+    "name": "Homy Plus",
+    "description": "Homy Plus lets you easily manage a group calendar",
+    "icon": "./assets/icon512x512.png",
+    "notifications": {
+      "icon": "./assets/icon48x48.png"
+    },
+    "loading": {
+      "backgroundColor": "#3D6DCC",
+      "icon": "./assets/icon512x512.png",
+      "hideExponentText": true
+    },
+    "slug": "homyplus",
+    "privacy": "public",
     "sdkVersion": "21.0.0"
   }
 }
