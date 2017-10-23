@@ -3,9 +3,18 @@ import { connect } from 'react-redux';
 import { View, Share, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
 import { Divider, List, ListItem, Header, Button, Card, Text, FormInput, FormLabel } from 'react-native-elements';
 import PropTypes from 'prop-types';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as actions from '../actions/actionsCreators';
 
 class MyHome extends React.Component {
+  
+  // Override router config.
+  // TODO: Might be possible to use standard config.
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    tabBarIcon: ({tintColor}) => (<MaterialCommunityIcons name='home' size={26} color={ tintColor } />),
+    showIcon: true,
+  });
+
   constructor(props) {
     super(props);
     this.state = {

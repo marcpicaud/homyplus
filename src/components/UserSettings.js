@@ -4,9 +4,18 @@ import { connect } from 'react-redux';
 import { Button, Header } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import { Permissions, Notifications } from 'expo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as actions from '../actions/actionsCreators';
 
 class UserSettings extends React.Component {
+
+  // Override router config.
+  // TODO: Might be possible to use standard config.
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    tabBarIcon: ({tintColor}) => (<MaterialCommunityIcons name='settings' size={26} color={ tintColor } />),
+    showIcon: true,
+  });
+
   handleLogout() {
     this.props.logout();
     this.props.navigation.navigate('signedOutLayout');

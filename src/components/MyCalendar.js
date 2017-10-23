@@ -3,15 +3,18 @@ import { ActivityIndicator, View , StyleSheet} from 'react-native';
 import { connect } from 'react-redux';
 import { Text, Button, List, ListItem } from 'react-native-elements';
 import { Agenda } from 'react-native-calendars';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as actions from '../actions/actionsCreators';
 
 class MyCalendar extends React.Component {
 
-  // Override router config to add a button on headerRight.
+  // Override router config.
   // TODO: Might be possible to use standard config.
   static navigationOptions = ({ navigation, screenProps }) => ({
     headerRight: <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} />,
+    tabBarIcon: ({tintColor}) => (<MaterialCommunityIcons name='calendar' size={26} color={ tintColor } />),
+    showIcon: true,
   });
 
   constructor(props) {
