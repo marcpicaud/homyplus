@@ -43,7 +43,6 @@ export function login(email, password) {
         });
       })
       .catch((error) => {
-        console.error(error);
         dispatch(setLoginError(error));
       });
   };
@@ -86,6 +85,7 @@ export function fetchHomeEvents(homeKey = null) {
         }
       });
     } else {
+      console.log('HOME_EVENTS SHOULD BE NULL');
       dispatch({
         type: ActionTypes.SET_HOME_EVENTS,
         payload: null,
