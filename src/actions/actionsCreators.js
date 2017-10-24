@@ -105,6 +105,10 @@ export function signup(email, password, username) {
             type: ActionTypes.LOGIN,
             payload: Auth.currentUser,
           });
+
+          // Init store with null values
+          dispatch(fetchHome(null));
+          dispatch(fetchHomeEvents(null));
         })
         // Save some user info into realtime database
         Users.child(Auth.currentUser.uid).set({
