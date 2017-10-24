@@ -3,7 +3,7 @@
     "name": "Homy Plus",
     "description": "Homy Plus lets you easily manage a group calendar",
     "icon": "./assets/icon512x512.png",
-    "notifications": {
+    "notification": {
       "icon": "./assets/icon48x48.png"
     },
     "loading": {
