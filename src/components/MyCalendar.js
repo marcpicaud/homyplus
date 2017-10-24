@@ -12,7 +12,7 @@ class MyCalendar extends React.Component {
   // Override router config.
   // TODO: Might be possible to use standard config.
   static navigationOptions = ({ navigation, screenProps }) => ({
-    headerRight: <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} />,
+    headerRight: screenProps.home ? <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} /> : null,
     tabBarIcon: ({tintColor}) => (<MaterialCommunityIcons name='calendar' size={26} color={ tintColor } />),
     showIcon: true,
   });
