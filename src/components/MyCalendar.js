@@ -11,8 +11,8 @@ class MyCalendar extends React.Component {
 
   // Override router config.
   // TODO: Might be possible to use standard config.
-  static navigationOptions = ({ navigation, screenProps }) => ({
-    headerRight: screenProps.home ? <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} /> : null,
+  static navigationOptions = ({ navigation, screenProps  }) => ({
+    headerRight: <Button title="Add" icon={{ name: 'add' }} backgroundColor="#3D6DCC" onPress={() => navigation.navigate('addEvent')} />,
     tabBarIcon: ({tintColor}) => (<MaterialCommunityIcons name='calendar' size={26} color={ tintColor } />),
     showIcon: true,
   });
@@ -41,6 +41,7 @@ class MyCalendar extends React.Component {
       return;
     }
 
+    this.props.navigation.setParams({hasAHome: true});
     // Loops through firebase data and build the inner state accordingly
     const items = {}
     Object.keys(nextProps.homeEvents).forEach((key, index) => {
@@ -57,7 +58,7 @@ class MyCalendar extends React.Component {
       if(day_diff >= 0) {
         //check if event is multiday
         if(day_diff > 0) {
-          console.log("multi days event"+index, currentEvent)
+          //console.log("multi days event"+index, currentEvent)
           newEvent = currentEvent;
           for (var i = 0; i < day_diff; i++) {
             newEventDate = new Date(newEvent.beginDate)
@@ -66,11 +67,11 @@ class MyCalendar extends React.Component {
               items[newEvent.beginDate] = []
             }
             items[newEvent.beginDate].push(newEvent);
-            console.log("newEvent is: ", newEvent)
+            //console.log("newEvent is: ", newEvent)
           }
         }
       } else {
-        console.log("begin date is superior to end date EXIT")
+        //console.log("begin date is superior to end date EXIT")
         return;
       }
 
